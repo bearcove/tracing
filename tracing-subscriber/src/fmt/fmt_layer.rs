@@ -942,7 +942,7 @@ where
     }
 
     fn on_event(&self, event: &Event<'_>, ctx: Context<'_, S>) {
-        thread_local! {
+        rubicon::thread_local! {
             static BUF: RefCell<String> = RefCell::new(String::new());
         }
 

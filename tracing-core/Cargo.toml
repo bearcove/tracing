@@ -29,12 +29,15 @@ rust-version = "1.56.0"
 [features]
 default = ["std", "valuable/std"]
 std = ["once_cell"]
+import-globals = ["rubicon/import-globals"]
+export-globals = ["rubicon/export-globals"]
 
 [badges]
 maintenance = { status = "actively-developed" }
 
 [dependencies]
 once_cell = { version = "1.13.0", optional = true }
+rubicon = { git = "https://github.com/bearcove/rubicon.git", version = "1.0.0" }
 
 [target.'cfg(tracing_unstable)'.dependencies]
 valuable = { version = "0.1.0", optional = true, default-features = false }

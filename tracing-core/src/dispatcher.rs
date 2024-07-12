@@ -186,7 +186,7 @@ enum Kind<T> {
 }
 
 #[cfg(feature = "std")]
-thread_local! {
+rubicon::thread_local! {
     static CURRENT_STATE: State = State {
         default: RefCell::new(None),
         can_enter: Cell::new(true),
