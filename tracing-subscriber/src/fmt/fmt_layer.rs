@@ -801,7 +801,7 @@ macro_rules! with_event_from_span {
     };
 }
 
-rubicon::thread_local! {
+tracing_core::rubicon::thread_local! {
     static BUF: RefCell<String> = RefCell::new(String::new());
 }
 

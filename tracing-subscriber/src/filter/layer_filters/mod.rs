@@ -156,7 +156,7 @@ struct DebugCounters {
     in_interest_pass: Cell<usize>,
 }
 
-rubicon::thread_local! {
+tracing_core::rubicon::thread_local! {
     pub(crate) static FILTERING: FilterState = FilterState::new();
 }
 

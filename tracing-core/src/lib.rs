@@ -266,6 +266,8 @@ pub type Once = self::spin::Once<()>;
 #[cfg(feature = "std")]
 pub use stdlib::sync::Once;
 
+pub use rubicon;
+
 pub mod callsite;
 pub mod dispatcher;
 pub mod event;
