@@ -172,7 +172,7 @@ impl DebugCounters {
     }
 }
 
-thread_local! {
+rubicon::thread_local! {
     pub(crate) static FILTERING: FilterState = const { FilterState::new() };
 }
 

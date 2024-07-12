@@ -209,7 +209,7 @@ impl Registry {
     }
 }
 
-thread_local! {
+rubicon::thread_local! {
     /// `CLOSE_COUNT` is the thread-local counter used by `CloseGuard` to
     /// track how many subscribers have processed the close.
     /// For additional details, see [`CloseGuard`].
