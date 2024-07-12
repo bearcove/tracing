@@ -49,8 +49,8 @@ valuable = [
 # formatters.
 local-time = ["time/local-offset"]
 
-import-globals = ["rubicon/import-globals"]
-export-globals = ["rubicon/export-globals"]
+import-globals = ["tracing-core/import-globals"]
+export-globals = ["tracing-core/export-globals"]
 
 [dependencies]
 tracing-core = { path = "../tracing-core", version = "0.1.30", default-features = false }
@@ -89,7 +89,6 @@ chrono = { version = "0.4.26", default-features = false, features = [
 # registry
 sharded-slab = { version = "0.1.4", optional = true }
 thread_local = { version = "1.1.4", optional = true }
-rubicon = { version = "1.0.0" }
 
 [target.'cfg(tracing_unstable)'.dependencies]
 valuable_crate = { package = "valuable", version = "0.1.0", optional = true, default-features = false }

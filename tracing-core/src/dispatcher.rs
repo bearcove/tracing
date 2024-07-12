@@ -193,8 +193,9 @@ rubicon::thread_local! {
     };
 }
 
-static EXISTS: AtomicBool = AtomicBool::new(false);
-static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
+// FIXME: not pub
+pub static EXISTS: AtomicBool = AtomicBool::new(false);
+pub static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
 
 #[cfg(feature = "std")]
 static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
