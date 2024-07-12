@@ -48,6 +48,9 @@ wasm-bindgen-test = "0.3.38"
 [features]
 default = ["std", "attributes"]
 
+import-globals = ["std", "tracing-core/import-globals"]
+export-globals = ["std", "tracing-core/export-globals"]
+
 max_level_off = []
 max_level_error = []
 max_level_warn = []
