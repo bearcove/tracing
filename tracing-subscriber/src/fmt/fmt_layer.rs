@@ -801,6 +801,10 @@ macro_rules! with_event_from_span {
     };
 }
 
+rubicon::thread_local! {
+    static BUF: RefCell<String> = RefCell::new(String::new());
+}
+
 impl<S, N, E, W> layer::Layer<S> for Layer<S, N, E, W>
 where
     S: Subscriber + for<'a> LookupSpan<'a>,
@@ -942,10 +946,6 @@ where
     }
 
     fn on_event(&self, event: &Event<'_>, ctx: Context<'_, S>) {
-        rubicon::thread_local! {
-            static BUF: RefCell<String> = RefCell::new(String::new());
-        }
-
         BUF.with(|buf| {
             let borrow = buf.try_borrow_mut();
             let mut a;
