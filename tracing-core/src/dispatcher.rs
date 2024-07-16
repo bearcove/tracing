@@ -193,9 +193,13 @@ rubicon::thread_local! {
     };
 }
 
-// FIXME: not pub
-pub static EXISTS: AtomicBool = AtomicBool::new(false);
-pub static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
+rubicon::process_local! {
+    static EXISTS: AtomicBool = AtomicBool::new(false);
+}
+
+rubicon::process_local! {
+    static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
+}
 
 #[cfg(feature = "std")]
 static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
@@ -204,9 +208,25 @@ const UNINITIALIZED: usize = 0;
 const INITIALIZING: usize = 1;
 const INITIALIZED: usize = 2;
 
+#[cfg(feature = "export-globals")]
+#[no_mangle]
+#[allow(improper_ctypes)]
 static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
     subscriber: Kind::Global(&NO_SUBSCRIBER),
 };
+
+#[cfg(feature = "import-globals")]
+#[no_mangle]
+#[allow(improper_ctypes)]
+extern "C" {
+    static mut GLOBAL_DISPATCH: Dispatch;
+}
+
+#[cfg(not(all(feature = "import-globals", feature = "export-globals")))]
+static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
+    subscriber: Kind::Global(&NO_SUBSCRIBER),
+};
+
 static NONE: Dispatch = Dispatch {
     subscriber: Kind::Global(&NO_SUBSCRIBER),
 };
