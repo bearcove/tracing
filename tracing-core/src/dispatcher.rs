@@ -222,7 +222,7 @@ extern "C" {
     static mut GLOBAL_DISPATCH: Dispatch;
 }
 
-#[cfg(not(all(feature = "import-globals", feature = "export-globals")))]
+#[cfg(all(not(feature = "import-globals"), not(feature = "export-globals")))]
 static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
     subscriber: Kind::Global(&NO_SUBSCRIBER),
 };
