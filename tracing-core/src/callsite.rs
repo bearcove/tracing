@@ -254,14 +254,20 @@ pub fn register(callsite: &'static dyn Callsite) {
     CALLSITES.push_dyn(callsite);
 }
 
-static CALLSITES: Callsites = Callsites {
-    list_head: AtomicPtr::new(ptr::null_mut()),
-    has_locked_callsites: AtomicBool::new(false),
-};
+rubicon::process_local! {
+    static CALLSITES: Callsites = Callsites {
+        list_head: AtomicPtr::new(ptr::null_mut()),
+        has_locked_callsites: AtomicBool::new(false),
+    };
+}
 
-static DISPATCHERS: Dispatchers = Dispatchers::new();
+rubicon::process_local! {
+    static DISPATCHERS: Dispatchers = Dispatchers::new();
+}
 
-static LOCKED_CALLSITES: Lazy<Mutex<Vec<&'static dyn Callsite>>> = Lazy::new(Default::default);
+rubicon::process_local! {
+    static LOCKED_CALLSITES: Lazy<Mutex<Vec<&'static dyn Callsite>>> = Lazy::new(Default::default);
+}
 
 struct Callsites {
     list_head: AtomicPtr<DefaultCallsite>,
@@ -526,8 +532,10 @@ mod dispatchers {
         has_just_one: AtomicBool,
     }
 
-    static LOCKED_DISPATCHERS: Lazy<RwLock<Vec<dispatcher::Registrar>>> =
-        Lazy::new(Default::default);
+    rubicon::process_local! {
+        static LOCKED_DISPATCHERS: Lazy<RwLock<Vec<dispatcher::Registrar>>> =
+            Lazy::new(Default::default);
+    }
 
     pub(super) enum Rebuilder<'a> {
         JustOne,

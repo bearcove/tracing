@@ -1517,7 +1517,10 @@ pub struct Identity {
 
 #[derive(Clone, Copy)]
 pub(crate) struct NoneLayerMarker(());
-static NONE_LAYER_MARKER: NoneLayerMarker = NoneLayerMarker(());
+
+rubicon::process_local! {
+    static NONE_LAYER_MARKER: NoneLayerMarker = NoneLayerMarker(());
+}
 
 /// Is a type implementing `Layer` `Option::<_>::None`?
 pub(crate) fn layer_is_none<L, S>(layer: &L) -> bool

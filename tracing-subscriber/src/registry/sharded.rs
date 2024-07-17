@@ -445,41 +445,46 @@ impl<'a> SpanData<'a> for Data<'a> {
 
 // === impl DataInner ===
 
+// Since `DataInner` owns a `&'static Callsite` pointer, we need
+// something to use as the initial default value for that callsite.
+// Since we can't access a `DataInner` until it has had actual span data
+// inserted into it, the null metadata will never actually be accessed.
+struct NullCallsite;
+impl tracing_core::callsite::Callsite for NullCallsite {
+    fn set_interest(&self, _: Interest) {
+        unreachable!(
+            "/!\\ Tried to register the null callsite /!\\\n \
+            This should never have happened and is definitely a bug. \
+            A `tracing` bug report would be appreciated."
+        )
+    }
+
+    fn metadata(&self) -> &Metadata<'_> {
+        unreachable!(
+            "/!\\ Tried to access the null callsite's metadata /!\\\n \
+            This should never have happened and is definitely a bug. \
+            A `tracing` bug report would be appreciated."
+        )
+    }
+}
+
+rubicon::process_local! {
+    static NULL_CALLSITE: NullCallsite = NullCallsite;
+}
+
+rubicon::process_local! {
+    static NULL_METADATA: Metadata<'static> = tracing_core::metadata! {
+        name: "",
+        target: "",
+        level: tracing_core::Level::TRACE,
+        fields: &[],
+        callsite: &NULL_CALLSITE,
+        kind: tracing_core::metadata::Kind::SPAN,
+    };
+}
+
 impl Default for DataInner {
     fn default() -> Self {
-        // Since `DataInner` owns a `&'static Callsite` pointer, we need
-        // something to use as the initial default value for that callsite.
-        // Since we can't access a `DataInner` until it has had actual span data
-        // inserted into it, the null metadata will never actually be accessed.
-        struct NullCallsite;
-        impl tracing_core::callsite::Callsite for NullCallsite {
-            fn set_interest(&self, _: Interest) {
-                unreachable!(
-                    "/!\\ Tried to register the null callsite /!\\\n \
-                    This should never have happened and is definitely a bug. \
-                    A `tracing` bug report would be appreciated."
-                )
-            }
-
-            fn metadata(&self) -> &Metadata<'_> {
-                unreachable!(
-                    "/!\\ Tried to access the null callsite's metadata /!\\\n \
-                    This should never have happened and is definitely a bug. \
-                    A `tracing` bug report would be appreciated."
-                )
-            }
-        }
-
-        static NULL_CALLSITE: NullCallsite = NullCallsite;
-        static NULL_METADATA: Metadata<'static> = tracing_core::metadata! {
-            name: "",
-            target: "",
-            level: tracing_core::Level::TRACE,
-            fields: &[],
-            callsite: &NULL_CALLSITE,
-            kind: tracing_core::metadata::Kind::SPAN,
-        };
-
         Self {
             filter_map: FilterMap::default(),
             metadata: &NULL_METADATA,

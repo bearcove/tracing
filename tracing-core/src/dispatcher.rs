@@ -201,8 +201,10 @@ rubicon::process_local! {
     static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
 }
 
-#[cfg(feature = "std")]
-static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
+rubicon::process_local! {
+    #[cfg(feature = "std")]
+    static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
+}
 
 const UNINITIALIZED: usize = 0;
 const INITIALIZING: usize = 1;
@@ -227,10 +229,15 @@ static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
     subscriber: Kind::Global(&NO_SUBSCRIBER),
 };
 
-static NONE: Dispatch = Dispatch {
-    subscriber: Kind::Global(&NO_SUBSCRIBER),
-};
-static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
+rubicon::process_local! {
+    static NONE: Dispatch = Dispatch {
+        subscriber: Kind::Global(&NO_SUBSCRIBER),
+    };
+}
+
+rubicon::process_local! {
+    static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
+}
 
 /// The dispatch state of a thread.
 #[cfg(feature = "std")]
