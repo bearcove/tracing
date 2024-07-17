@@ -235,9 +235,8 @@ rubicon::process_local! {
     };
 }
 
-rubicon::process_local! {
-    static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
-}
+// FIXME: how do we make this process-local?
+static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
 
 /// The dispatch state of a thread.
 #[cfg(feature = "std")]
