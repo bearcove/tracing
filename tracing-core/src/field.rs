@@ -640,7 +640,9 @@ impl fmt::Debug for dyn Value {
         // We are only going to be recording the field value, so we don't
         // actually care about the field name here.
         struct NullCallsite;
-        static NULL_CALLSITE: NullCallsite = NullCallsite;
+        rubicon::process_local! {
+            static NULL_CALLSITE: NullCallsite = NullCallsite;
+        }
         impl crate::callsite::Callsite for NullCallsite {
             fn set_interest(&self, _: crate::subscriber::Interest) {
                 unreachable!("you somehow managed to register the null callsite?")
@@ -651,10 +653,12 @@ impl fmt::Debug for dyn Value {
             }
         }
 
-        static FIELD: Field = Field {
-            i: 0,
-            fields: FieldSet::new(&[], crate::identify_callsite!(&NULL_CALLSITE)),
-        };
+        rubicon::process_local! {
+            static FIELD: Field = Field {
+                i: 0,
+                fields: FieldSet::new(&[], crate::identify_callsite!(&NULL_CALLSITE)),
+            };
+        }
 
         let mut res = Ok(());
         self.record(&FIELD, &mut |_: &Field, val: &dyn fmt::Debug| {
@@ -1091,15 +1095,18 @@ mod test {
 
     // Make sure TEST_CALLSITE_* have non-zero size, so they can't be located at the same address.
     struct TestCallsite1(u8);
-    static TEST_CALLSITE_1: TestCallsite1 = TestCallsite1(0);
-    static TEST_META_1: Metadata<'static> = metadata! {
-        name: "field_test1",
-        target: module_path!(),
-        level: Level::INFO,
-        fields: &["foo", "bar", "baz"],
-        callsite: &TEST_CALLSITE_1,
-        kind: Kind::SPAN,
-    };
+
+    rubicon::process_local! {
+        static TEST_CALLSITE_1: TestCallsite1 = TestCallsite1(0);
+        static TEST_META_1: Metadata<'static> = metadata! {
+            name: "field_test1",
+            target: module_path!(),
+            level: Level::INFO,
+            fields: &["foo", "bar", "baz"],
+            callsite: &TEST_CALLSITE_1,
+            kind: Kind::SPAN,
+        };
+    }
 
     impl crate::callsite::Callsite for TestCallsite1 {
         fn set_interest(&self, _: crate::subscriber::Interest) {
@@ -1112,15 +1119,17 @@ mod test {
     }
 
     struct TestCallsite2(u8);
-    static TEST_CALLSITE_2: TestCallsite2 = TestCallsite2(0);
-    static TEST_META_2: Metadata<'static> = metadata! {
-        name: "field_test2",
-        target: module_path!(),
-        level: Level::INFO,
-        fields: &["foo", "bar", "baz"],
-        callsite: &TEST_CALLSITE_2,
-        kind: Kind::SPAN,
-    };
+    rubicon::process_local! {
+        static TEST_CALLSITE_2: TestCallsite2 = TestCallsite2(0);
+        static TEST_META_2: Metadata<'static> = metadata! {
+            name: "field_test2",
+            target: module_path!(),
+            level: Level::INFO,
+            fields: &["foo", "bar", "baz"],
+            callsite: &TEST_CALLSITE_2,
+            kind: Kind::SPAN,
+        };
+    }
 
     impl crate::callsite::Callsite for TestCallsite2 {
         fn set_interest(&self, _: crate::subscriber::Interest) {

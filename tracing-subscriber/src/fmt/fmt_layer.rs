@@ -942,11 +942,11 @@ where
     }
 
     fn on_event(&self, event: &Event<'_>, ctx: Context<'_, S>) {
-        thread_local! {
-            static BUF: RefCell<String> = RefCell::new(String::new());
+        rubicon::thread_local! {
+            static TRACING_SUBSCRIBER_FMT_LAYER_BUF: RefCell<String> = RefCell::new(String::new());
         }
 
-        BUF.with(|buf| {
+        TRACING_SUBSCRIBER_FMT_LAYER_BUF.with(|buf| {
             let borrow = buf.try_borrow_mut();
             let mut a;
             let mut b;

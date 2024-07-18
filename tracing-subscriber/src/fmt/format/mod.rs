@@ -1436,7 +1436,9 @@ impl<'a> fmt::Display for FmtThreadName<'a> {
 
         // Track the longest thread name length we've seen so far in an atomic,
         // so that it can be updated by any thread.
-        static MAX_LEN: AtomicUsize = AtomicUsize::new(0);
+        rubicon::process_local! {
+            static MAX_LEN: AtomicUsize = AtomicUsize::new(0);
+        }
         let len = self.name.len();
         // Snapshot the current max thread name length.
         let mut max_len = MAX_LEN.load(Relaxed);

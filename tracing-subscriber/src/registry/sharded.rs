@@ -209,7 +209,7 @@ impl Registry {
     }
 }
 
-thread_local! {
+rubicon::thread_local! {
     /// `CLOSE_COUNT` is the thread-local counter used by `CloseGuard` to
     /// track how many layers have processed the close.
     /// For additional details, see [`CloseGuard`].
@@ -470,15 +470,17 @@ impl Default for DataInner {
             }
         }
 
-        static NULL_CALLSITE: NullCallsite = NullCallsite;
-        static NULL_METADATA: Metadata<'static> = tracing_core::metadata! {
-            name: "",
-            target: "",
-            level: tracing_core::Level::TRACE,
-            fields: &[],
-            callsite: &NULL_CALLSITE,
-            kind: tracing_core::metadata::Kind::SPAN,
-        };
+        rubicon::process_local! {
+            static NULL_CALLSITE: NullCallsite = NullCallsite;
+            static NULL_METADATA: Metadata<'static> = tracing_core::metadata! {
+                name: "",
+                target: "",
+                level: tracing_core::Level::TRACE,
+                fields: &[],
+                callsite: &NULL_CALLSITE,
+                kind: tracing_core::metadata::Kind::SPAN,
+            };
+        }
 
         Self {
             filter_map: FilterMap::default(),

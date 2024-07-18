@@ -699,6 +699,36 @@ impl Subscriber for NoSubscriber {
     fn exit(&self, _span: &span::Id) {}
 }
 
+impl Subscriber for rubicon::TrustedExtern<NoSubscriber> {
+    fn enabled(&self, metadata: &Metadata<'_>) -> bool {
+        self.0.enabled(metadata)
+    }
+
+    fn new_span(&self, span: &span::Attributes<'_>) -> span::Id {
+        self.0.new_span(span)
+    }
+
+    fn record(&self, span: &span::Id, values: &span::Record<'_>) {
+        self.0.record(span, values)
+    }
+
+    fn record_follows_from(&self, span: &span::Id, follows: &span::Id) {
+        self.0.record_follows_from(span, follows)
+    }
+
+    fn event(&self, event: &Event<'_>) {
+        self.0.event(event)
+    }
+
+    fn enter(&self, span: &span::Id) {
+        self.0.enter(span)
+    }
+
+    fn exit(&self, span: &span::Id) {
+        self.0.exit(span)
+    }
+}
+
 impl NoSubscriber {
     /// Returns a new `NoSubscriber`.
     #[must_use]

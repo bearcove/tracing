@@ -32,6 +32,7 @@ tracing-core = { path = "../tracing-core", version = "0.1.32", default-features 
 log = { version = "0.4.17", optional = true }
 tracing-attributes = { path = "../tracing-attributes", version = "0.1.27", optional = true }
 pin-project-lite = "0.2.9"
+rubicon = "3.0.1"
 
 [dev-dependencies]
 criterion = { version = "0.3.6", default_features = false }

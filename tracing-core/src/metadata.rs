@@ -242,7 +242,9 @@ pub struct LevelFilter(Option<Level>);
 #[derive(Clone, Debug)]
 pub struct ParseLevelFilterError(());
 
-static MAX_LEVEL: AtomicUsize = AtomicUsize::new(LevelFilter::OFF_USIZE);
+rubicon::process_local! {
+    static MAX_LEVEL: AtomicUsize = AtomicUsize::new(LevelFilter::OFF_USIZE);
+}
 
 // ===== impl Metadata =====
 
