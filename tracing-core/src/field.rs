@@ -684,10 +684,12 @@ impl fmt::Debug for dyn Value {
             }
         }
 
-        static FIELD: Field = Field {
-            i: 0,
-            fields: FieldSet::new(&[], crate::identify_callsite!(&NULL_CALLSITE)),
-        };
+        rubicon::process_local! {
+            static FIELD: Field = Field {
+                i: 0,
+                fields: FieldSet::new(&[], crate::identify_callsite!(&NULL_CALLSITE)),
+            };
+        }
 
         let mut res = Ok(());
         self.record(&FIELD, &mut |_: &Field, val: &dyn fmt::Debug| {

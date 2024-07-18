@@ -950,6 +950,8 @@ extern crate alloc;
 #[doc(hidden)]
 use tracing_core::*;
 
+pub use rubicon;
+
 #[doc(inline)]
 pub use self::instrument::Instrument;
 pub use self::{dispatcher::Dispatch, event::Event, field::Value, subscriber::Subscriber};
@@ -1128,4 +1130,20 @@ pub mod log {
 
 mod sealed {
     pub trait Sealed {}
+}
+
+rubicon::compatibility_check! {
+    ("version", env!("CARGO_PKG_VERSION")),
+
+    #[cfg(feature = "std")]
+    ("std", "enabled"),
+
+    #[cfg(feature = "attributes")]
+    ("attributes", "enabled"),
+
+    #[cfg(feature = "log-always")]
+    ("log-always", "enabled"),
+
+    #[cfg(feature = "valuable")]
+    ("valuable", "enabled"),
 }

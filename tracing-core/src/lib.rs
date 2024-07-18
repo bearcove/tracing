@@ -300,3 +300,10 @@ pub use self::{metadata::Kind, subscriber::Interest};
 mod sealed {
     pub trait Sealed {}
 }
+
+rubicon::compatibility_check! {
+    ("version", env!("CARGO_PKG_VERSION")),
+
+    #[cfg(feature = "std")]
+    ("std", "enabled"),
+}
