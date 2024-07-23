@@ -9,7 +9,10 @@ name = "tracing"
 # - Update CHANGELOG.md.
 # - Create "v0.1.x" git tag
 version = "0.1.40"
-authors = ["Eliza Weisman <eliza@buoyant.io>", "Tokio Contributors <team@tokio.rs>"]
+authors = [
+    "Eliza Weisman <eliza@buoyant.io>",
+    "Tokio Contributors <team@tokio.rs>",
+]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/tokio-rs/tracing"
@@ -32,7 +35,7 @@ tracing-core = { path = "../tracing-core", version = "0.1.32", default-features 
 log = { version = "0.4.17", optional = true }
 tracing-attributes = { path = "../tracing-attributes", version = "0.1.27", optional = true }
 pin-project-lite = "0.2.9"
-rubicon = "3.0.1"
+rubicon = "3.2.0"
 
 [dev-dependencies]
 criterion = { version = "0.3.6", default_features = false }
@@ -46,17 +49,17 @@ wasm-bindgen-test = "0.3.38"
 [features]
 default = ["std", "attributes"]
 
-max_level_off   = []
+max_level_off = []
 max_level_error = []
-max_level_warn  = []
-max_level_info  = []
+max_level_warn = []
+max_level_info = []
 max_level_debug = []
 max_level_trace = []
 
-release_max_level_off   = []
+release_max_level_off = []
 release_max_level_error = []
-release_max_level_warn  = []
-release_max_level_info  = []
+release_max_level_warn = []
+release_max_level_info = []
 release_max_level_debug = []
 release_max_level_trace = []
 

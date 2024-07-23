@@ -157,9 +157,7 @@ use tracing_subscriber::Layer;
 
 mod error;
 
-rubicon::process_local! {
-    static START: Lazy<Instant> = Lazy::new(Instant::now);
-}
+static START: Lazy<Instant> = Lazy::new(Instant::now);
 
 rubicon::thread_local! {
     static LAST_EVENT: Cell<Instant> = Cell::new(*START);
