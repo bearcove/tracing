@@ -505,3 +505,7 @@ where
 
     Ok(())
 }
+
+rubicon::compatibility_check! {
+    ("version", env!("CARGO_PKG_VERSION")),
+}

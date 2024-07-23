@@ -606,3 +606,7 @@ mod test {
         test_callsite(log::Level::Trace);
     }
 }
+
+rubicon::compatibility_check! {
+    ("version", env!("CARGO_PKG_VERSION")),
+}

@@ -35,7 +35,7 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 once_cell = { version = "1.13.0", optional = true }
-rubicon = "3.2.0"
+rubicon = "3.3.3"
 
 [target.'cfg(tracing_unstable)'.dependencies]
 valuable = { version = "0.1.0", optional = true, default-features = false }
