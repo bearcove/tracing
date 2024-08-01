@@ -470,17 +470,15 @@ impl Default for DataInner {
             }
         }
 
-        rubicon::process_local! {
-            static NULL_CALLSITE: NullCallsite = NullCallsite;
-            static NULL_METADATA: Metadata<'static> = tracing_core::metadata! {
-                name: "",
-                target: "",
-                level: tracing_core::Level::TRACE,
-                fields: &[],
-                callsite: &NULL_CALLSITE,
-                kind: tracing_core::metadata::Kind::SPAN,
-            };
-        }
+        static NULL_CALLSITE: NullCallsite = NullCallsite;
+        static NULL_METADATA: Metadata<'static> = tracing_core::metadata! {
+            name: "",
+            target: "",
+            level: tracing_core::Level::TRACE,
+            fields: &[],
+            callsite: &NULL_CALLSITE,
+            kind: tracing_core::metadata::Kind::SPAN,
+        };
 
         Self {
             filter_map: FilterMap::default(),

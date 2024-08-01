@@ -640,9 +640,7 @@ impl fmt::Debug for dyn Value {
         // We are only going to be recording the field value, so we don't
         // actually care about the field name here.
         struct NullCallsite;
-        rubicon::process_local! {
-            static NULL_CALLSITE: NullCallsite = NullCallsite;
-        }
+        static NULL_CALLSITE: NullCallsite = NullCallsite;
         impl crate::callsite::Callsite for NullCallsite {
             fn set_interest(&self, _: crate::subscriber::Interest) {
                 unreachable!("you somehow managed to register the null callsite?")
