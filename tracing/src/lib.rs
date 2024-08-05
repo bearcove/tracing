@@ -948,6 +948,8 @@ extern crate alloc;
 #[doc(hidden)]
 use tracing_core::*;
 
+pub use rubicon;
+
 #[doc(inline)]
 pub use self::instrument::Instrument;
 pub use self::{dispatcher::Dispatch, event::Event, field::Value, subscriber::Subscriber};
@@ -1126,4 +1128,62 @@ pub mod log {
 
 mod sealed {
     pub trait Sealed {}
+}
+
+rubicon::compatibility_check! {
+    ("version", env!("CARGO_PKG_VERSION")),
+
+    #[cfg(feature = "std")]
+    ("std", "enabled"),
+
+    #[cfg(feature = "attributes")]
+    ("attributes", "enabled"),
+
+    // These are all just compile-time filters
+
+    // #[cfg(feature = "max_level_off")]
+    // ("max_level_off", "enabled"),
+
+    // #[cfg(feature = "max_level_error")]
+    // ("max_level_error", "enabled"),
+
+    // #[cfg(feature = "max_level_warn")]
+    // ("max_level_warn", "enabled"),
+
+    // #[cfg(feature = "max_level_info")]
+    // ("max_level_info", "enabled"),
+
+    // #[cfg(feature = "max_level_debug")]
+    // ("max_level_debug", "enabled"),
+
+    // #[cfg(feature = "max_level_trace")]
+    // ("max_level_trace", "enabled"),
+
+    // #[cfg(feature = "release_max_level_off")]
+    // ("release_max_level_off", "enabled"),
+
+    // #[cfg(feature = "release_max_level_error")]
+    // ("release_max_level_error", "enabled"),
+
+    // #[cfg(feature = "release_max_level_warn")]
+    // ("release_max_level_warn", "enabled"),
+
+    // #[cfg(feature = "release_max_level_info")]
+    // ("release_max_level_info", "enabled"),
+
+    // #[cfg(feature = "release_max_level_debug")]
+    // ("release_max_level_debug", "enabled"),
+
+    // #[cfg(feature = "release_max_level_trace")]
+    // ("release_max_level_trace", "enabled"),
+
+    // That one is deprecated
+    // #[cfg(feature = "async-await")]
+    // ("async-await", "enabled"),
+
+    #[cfg(feature = "log-always")]
+    ("log-always", "enabled"),
+
+    #[cfg(feature = "valuable")]
+    ("valuable", "enabled"),
 }

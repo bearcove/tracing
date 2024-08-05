@@ -186,30 +186,34 @@ enum Kind<T> {
 }
 
 #[cfg(feature = "std")]
-thread_local! {
+rubicon::thread_local! {
     static CURRENT_STATE: State = State {
         default: RefCell::new(None),
         can_enter: Cell::new(true),
     };
 }
 
-static EXISTS: AtomicBool = AtomicBool::new(false);
-static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
+rubicon::process_local! {
+    static EXISTS: AtomicBool = AtomicBool::new(false);
+    static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
 
-#[cfg(feature = "std")]
-static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
+    #[cfg(feature = "std")]
+    static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
+}
 
 const UNINITIALIZED: usize = 0;
 const INITIALIZING: usize = 1;
 const INITIALIZED: usize = 2;
 
-static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
-    subscriber: Kind::Global(&NO_SUBSCRIBER),
-};
-static NONE: Dispatch = Dispatch {
-    subscriber: Kind::Global(&NO_SUBSCRIBER),
-};
-static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
+rubicon::process_local! {
+    static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
+        subscriber: Kind::Global(&NO_SUBSCRIBER),
+    };
+    static NONE: Dispatch = Dispatch {
+        subscriber: Kind::Global(&NO_SUBSCRIBER),
+    };
+    static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
+}
 
 /// The dispatch state of a thread.
 #[cfg(feature = "std")]
@@ -929,15 +933,17 @@ mod test {
     }
 
     struct TestCallsite;
-    static TEST_CALLSITE: TestCallsite = TestCallsite;
-    static TEST_META: Metadata<'static> = metadata! {
-        name: "test",
-        target: module_path!(),
-        level: Level::DEBUG,
-        fields: &[],
-        callsite: &TEST_CALLSITE,
-        kind: Kind::EVENT
-    };
+    rubicon::process_local! {
+        static TEST_CALLSITE: TestCallsite = TestCallsite;
+        static TEST_META: Metadata<'static> = metadata! {
+            name: "test",
+            target: module_path!(),
+            level: Level::DEBUG,
+            fields: &[],
+            callsite: &TEST_CALLSITE,
+            kind: Kind::EVENT
+        };
+    }
 
     impl Callsite for TestCallsite {
         fn set_interest(&self, _: Interest) {}
@@ -966,7 +972,9 @@ mod test {
             fn record_follows_from(&self, _: &span::Id, _: &span::Id) {}
 
             fn event(&self, _: &Event<'_>) {
-                static EVENTS: AtomicUsize = AtomicUsize::new(0);
+                rubicon::process_local! {
+                    static EVENTS: AtomicUsize = AtomicUsize::new(0);
+                }
                 assert_eq!(
                     EVENTS.fetch_add(1, Ordering::Relaxed),
                     0,
@@ -1007,7 +1015,9 @@ mod test {
             }
 
             fn new_span(&self, _: &span::Attributes<'_>) -> span::Id {
-                static NEW_SPANS: AtomicUsize = AtomicUsize::new(0);
+                rubicon::process_local! {
+                    static NEW_SPANS: AtomicUsize = AtomicUsize::new(0);
+                }
                 assert_eq!(
                     NEW_SPANS.fetch_add(1, Ordering::Relaxed),
                     0,
