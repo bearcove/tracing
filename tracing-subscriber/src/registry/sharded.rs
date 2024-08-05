@@ -209,7 +209,7 @@ impl Registry {
     }
 }
 
-rubicon::thread_local! {
+thread_local! {
     /// `CLOSE_COUNT` is the thread-local counter used by `CloseGuard` to
     /// track how many layers have processed the close.
     /// For additional details, see [`CloseGuard`].

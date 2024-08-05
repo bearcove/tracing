@@ -120,48 +120,46 @@ impl Directive {
     }
 
     pub(super) fn parse(from: &str, regex: bool) -> Result<Self, ParseError> {
-        rubicon::process_local! {
-            static DIRECTIVE_RE: Lazy<Regex> = Lazy::new(|| {
+        static DIRECTIVE_RE: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(
+                r"(?x)
+            ^(?P<global_level>(?i:trace|debug|info|warn|error|off|[0-5]))$ |
+                #                 ^^^.
+                #                     `note: we match log level names case-insensitively
+            ^
+            (?: # target name or span name
+                (?P<target>[\w:-]+)|(?P<span>\[[^\]]*\])
+            ){1,2}
+            (?: # level or nothing
+                =(?P<level>(?i:trace|debug|info|warn|error|off|[0-5]))?
+                    #          ^^^.
+                    #              `note: we match log level names case-insensitively
+            )?
+            $
+            ",
+            )
+            .unwrap()
+        });
+        static SPAN_PART_RE: Lazy<Regex> =
+            Lazy::new(|| Regex::new(r"(?P<name>[^\]\{]+)?(?:\{(?P<fields>[^\}]*)\})?").unwrap());
+        static FIELD_FILTER_RE: Lazy<Regex> =
+            // TODO(eliza): this doesn't _currently_ handle value matchers that include comma
+            // characters. We should fix that.
+            Lazy::new(|| {
                 Regex::new(
                     r"(?x)
-                ^(?P<global_level>(?i:trace|debug|info|warn|error|off|[0-5]))$ |
-                    #                 ^^^.
-                    #                     `note: we match log level names case-insensitively
-                ^
-                (?: # target name or span name
-                    (?P<target>[\w:-]+)|(?P<span>\[[^\]]*\])
-                ){1,2}
-                (?: # level or nothing
-                    =(?P<level>(?i:trace|debug|info|warn|error|off|[0-5]))?
-                        #          ^^^.
-                        #              `note: we match log level names case-insensitively
-                )?
-                $
-                ",
+                (
+                    # field name
+                    [[:word:]][[[:word:]]\.]*
+                    # value part (optional)
+                    (?:=[^,]+)?
+                )
+                # trailing comma or EOS
+                (?:,\s?|$)
+            ",
                 )
                 .unwrap()
             });
-            static SPAN_PART_RE: Lazy<Regex> =
-                Lazy::new(|| Regex::new(r"(?P<name>[^\]\{]+)?(?:\{(?P<fields>[^\}]*)\})?").unwrap());
-            static FIELD_FILTER_RE: Lazy<Regex> =
-                // TODO(eliza): this doesn't _currently_ handle value matchers that include comma
-                // characters. We should fix that.
-                Lazy::new(|| {
-                    Regex::new(
-                        r"(?x)
-                    (
-                        # field name
-                        [[:word:]][[[:word:]]\.]*
-                        # value part (optional)
-                        (?:=[^,]+)?
-                    )
-                    # trailing comma or EOS
-                    (?:,\s?|$)
-                ",
-                    )
-                    .unwrap()
-                });
-        }
 
         let caps = DIRECTIVE_RE.captures(from).ok_or_else(ParseError::new)?;
 

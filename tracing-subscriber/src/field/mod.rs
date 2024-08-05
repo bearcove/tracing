@@ -303,17 +303,15 @@ pub(in crate::field) mod test_util {
     }
 
     struct TestCallsite1;
-    rubicon::process_local! {
-        static TEST_CALLSITE_1: &'static dyn Callsite = &TestCallsite1;
-        static TEST_META_1: Metadata<'static> = tracing_core::metadata! {
-            name: "field_test1",
-            target: module_path!(),
-            level: Level::INFO,
-            fields: &["question", "question.answer", "tricky", "can_you_do_it"],
-            callsite: TEST_CALLSITE_1,
-            kind: Kind::SPAN,
-        };
-    }
+    static TEST_CALLSITE_1: &'static dyn Callsite = &TestCallsite1;
+    static TEST_META_1: Metadata<'static> = tracing_core::metadata! {
+        name: "field_test1",
+        target: module_path!(),
+        level: Level::INFO,
+        fields: &["question", "question.answer", "tricky", "can_you_do_it"],
+        callsite: TEST_CALLSITE_1,
+        kind: Kind::SPAN,
+    };
 
     impl Callsite for TestCallsite1 {
         fn set_interest(&self, _: tracing_core::subscriber::Interest) {

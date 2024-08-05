@@ -249,34 +249,3 @@ feature! {
 mod sealed {
     pub trait Sealed<A = ()> {}
 }
-
-rubicon::compatibility_check! {
-    ("version", env!("CARGO_PKG_VERSION")),
-
-    #[cfg(feature = "std")]
-    ("std", "enabled"),
-
-    #[cfg(feature = "alloc")]
-    ("alloc", "enabled"),
-
-    #[cfg(feature = "env-filter")]
-    ("env-filter", "enabled"),
-
-    #[cfg(feature = "fmt")]
-    ("fmt", "enabled"),
-
-    #[cfg(feature = "ansi")]
-    ("ansi", "enabled"),
-
-    #[cfg(feature = "registry")]
-    ("registry", "enabled"),
-
-    #[cfg(feature = "json")]
-    ("json", "enabled"),
-
-    #[cfg(feature = "valuable")]
-    ("valuable", "enabled"),
-
-    #[cfg(feature = "local-time")]
-    ("local-time", "enabled"),
-}
