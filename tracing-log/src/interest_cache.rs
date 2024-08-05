@@ -111,9 +111,7 @@ impl State {
 // like and whether subscribers will actually be interested in it, since nothing will actually
 // be logged from it.
 
-rubicon::process_local! {
-    static INTEREST_CACHE_EPOCH: AtomicUsize = AtomicUsize::new(0);
-}
+static INTEREST_CACHE_EPOCH: AtomicUsize = AtomicUsize::new(0);
 
 fn interest_cache_epoch() -> usize {
     INTEREST_CACHE_EPOCH.load(Ordering::Relaxed)
@@ -131,26 +129,24 @@ impl tracing_core::Callsite for SentinelCallsite {
     }
 }
 
-rubicon::process_local! {
-    static SENTINEL_CALLSITE: SentinelCallsite = SentinelCallsite;
-    static SENTINEL_METADATA: tracing_core::Metadata<'static> = tracing_core::Metadata::new(
-        "log interest cache",
-        "log",
-        tracing_core::Level::ERROR,
-        None,
-        None,
-        None,
-        tracing_core::field::FieldSet::new(&[], tracing_core::identify_callsite!(&SENTINEL_CALLSITE)),
-        tracing_core::metadata::Kind::EVENT,
-    );
+static SENTINEL_CALLSITE: SentinelCallsite = SentinelCallsite;
+static SENTINEL_METADATA: tracing_core::Metadata<'static> = tracing_core::Metadata::new(
+    "log interest cache",
+    "log",
+    tracing_core::Level::ERROR,
+    None,
+    None,
+    None,
+    tracing_core::field::FieldSet::new(&[], tracing_core::identify_callsite!(&SENTINEL_CALLSITE)),
+    tracing_core::metadata::Kind::EVENT,
+);
 
-    static CONFIG: Lazy<Mutex<InterestCacheConfig>> = Lazy::new(|| {
-        tracing_core::callsite::register(&SENTINEL_CALLSITE);
-        Mutex::new(InterestCacheConfig::disabled())
-    });
-}
+static CONFIG: Lazy<Mutex<InterestCacheConfig>> = Lazy::new(|| {
+    tracing_core::callsite::register(&SENTINEL_CALLSITE);
+    Mutex::new(InterestCacheConfig::disabled())
+});
 
-rubicon::thread_local! {
+thread_local! {
     static STATE: RefCell<State> = {
         let config = CONFIG.lock().unwrap();
         RefCell::new(State::new(interest_cache_epoch(), &config))
@@ -239,9 +235,7 @@ mod tests {
 
     fn lock_for_test() -> impl Drop {
         // We need to make sure only one test runs at a time.
-        rubicon::process_local! {
-            static LOCK: Lazy<Mutex<()>> = Lazy::new(Mutex::new);
-        }
+        static LOCK: Lazy<Mutex<()>> = Lazy::new(Mutex::new);
 
         match LOCK.lock() {
             Ok(guard) => guard,

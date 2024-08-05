@@ -123,8 +123,6 @@
 )]
 use once_cell::sync::Lazy;
 
-pub use rubicon;
-
 use std::{fmt, io};
 
 use tracing_core::{
@@ -252,7 +250,6 @@ struct Fields {
     line: field::Field,
 }
 
-// rubicon safety: this one can be duplicated across shared objects, it's fine.
 static FIELD_NAMES: &[&str] = &[
     "message",
     "log.target",
@@ -283,18 +280,16 @@ macro_rules! log_cs {
     ($level:expr, $cs:ident, $meta:ident, $ty:ident) => {
         struct $ty;
         static $cs: $ty = $ty;
-        $crate::rubicon::process_local! {
-            static $meta: Metadata<'static> = Metadata::new(
-                "log event",
-                "log",
-                $level,
-                ::core::option::Option::None,
-                ::core::option::Option::None,
-                ::core::option::Option::None,
-                field::FieldSet::new(FIELD_NAMES, identify_callsite!(&$cs)),
-                Kind::EVENT,
-            );
-        }
+        static $meta: Metadata<'static> = Metadata::new(
+            "log event",
+            "log",
+            $level,
+            ::core::option::Option::None,
+            ::core::option::Option::None,
+            ::core::option::Option::None,
+            field::FieldSet::new(FIELD_NAMES, identify_callsite!(&$cs)),
+            Kind::EVENT,
+        );
 
         impl callsite::Callsite for $ty {
             fn set_interest(&self, _: subscriber::Interest) {}
@@ -326,13 +321,11 @@ log_cs!(
     ErrorCallsite
 );
 
-rubicon::process_local! {
-    static TRACE_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&TRACE_CS));
-    static DEBUG_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&DEBUG_CS));
-    static INFO_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&INFO_CS));
-    static WARN_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&WARN_CS));
-    static ERROR_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&ERROR_CS));
-}
+static TRACE_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&TRACE_CS));
+static DEBUG_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&DEBUG_CS));
+static INFO_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&INFO_CS));
+static WARN_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&WARN_CS));
+static ERROR_FIELDS: Lazy<Fields> = Lazy::new(|| Fields::new(&ERROR_CS));
 
 fn level_to_cs(level: Level) -> (&'static dyn Callsite, &'static Fields) {
     match level {
@@ -605,8 +598,4 @@ mod test {
     fn trace_callsite_is_correct() {
         test_callsite(log::Level::Trace);
     }
-}
-
-rubicon::compatibility_check! {
-    ("version", env!("CARGO_PKG_VERSION")),
 }
