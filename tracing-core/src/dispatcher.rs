@@ -182,8 +182,8 @@ enum Kind<T> {
 }
 
 #[cfg(feature = "std")]
-thread_local! {
-    static CURRENT_STATE: State = const {
+rubicon::thread_local! {
+    static CURRENT_STATE: State = const  {
         State {
             default: RefCell::new(None),
             can_enter: Cell::new(true),
@@ -191,23 +191,27 @@ thread_local! {
     };
 }
 
-static EXISTS: AtomicBool = AtomicBool::new(false);
-static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
+rubicon::process_local! {
+    static EXISTS: AtomicBool = AtomicBool::new(false);
+    static GLOBAL_INIT: AtomicUsize = AtomicUsize::new(UNINITIALIZED);
 
-#[cfg(feature = "std")]
-static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
+    #[cfg(feature = "std")]
+    static SCOPED_COUNT: AtomicUsize = AtomicUsize::new(0);
+}
 
 const UNINITIALIZED: usize = 0;
 const INITIALIZING: usize = 1;
 const INITIALIZED: usize = 2;
 
-static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
-    subscriber: Kind::Global(&NO_SUBSCRIBER),
-};
-static NONE: Dispatch = Dispatch {
-    subscriber: Kind::Global(&NO_SUBSCRIBER),
-};
-static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
+rubicon::process_local! {
+    static mut GLOBAL_DISPATCH: Dispatch = Dispatch {
+        subscriber: Kind::Global(&NO_SUBSCRIBER),
+    };
+    static NONE: Dispatch = Dispatch {
+        subscriber: Kind::Global(&NO_SUBSCRIBER),
+    };
+    static NO_SUBSCRIBER: NoSubscriber = NoSubscriber::new();
+}
 
 /// The dispatch state of a thread.
 #[cfg(feature = "std")]
